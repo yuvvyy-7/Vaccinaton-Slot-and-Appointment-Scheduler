@@ -2,8 +2,6 @@
 
 A console app in C++ for managing vaccination appointments. You can register patients, create slots, book and cancel appointments, and keep track of whether someone has had their first and second dose.
 
-I made this as a college project to practice OOP in C++.
-
 ## What it does
 
 - Register a patient (each one gets a unique ID)
