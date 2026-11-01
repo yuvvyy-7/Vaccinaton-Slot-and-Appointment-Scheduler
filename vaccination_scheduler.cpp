@@ -31,6 +31,23 @@ int dateToDays(const string& date) {
     return static_cast<int>(timestamp / 86400);
 }
 
+// Reads one complete line and accepts it only if it contains a valid integer.
+bool readInt(const string& prompt, int& value) {
+    cout << prompt;
+    string input;
+    getline(cin >> ws, input);
+
+    stringstream line(input);
+    char extra;
+
+    if (!(line >> value) || (line >> extra)) {
+        cout << "Invalid input! Please enter a whole number.\n";
+        return false;
+    }
+
+    return true;
+}
+
 class Patient {
 private:
     int id;
@@ -230,8 +247,7 @@ public:
         cin >> ws;
         getline(cin, name);
 
-        cout << "Enter age: ";
-        cin >> age;
+        if (!readInt("Enter age: ", age)) return;
         cout << "Enter phone number: ";
         cin >> phone;
 
@@ -259,10 +275,8 @@ public:
         cin >> date;
         cout << "Enter time: ";
         cin >> time;
-        cout << "Enter slot capacity: ";
-        cin >> capacity;
-        cout << "Enter recommended gap between doses (days): ";
-        cin >> gap;
+        if (!readInt("Enter slot capacity: ", capacity)) return;
+        if (!readInt("Enter recommended gap between doses (days): ", gap)) return;
 
         if (capacity <= 0 || gap <= 0) {
             cout << endl;
@@ -314,15 +328,13 @@ public:
     void bookAppointment() {
         int patientId, slotId;
 
-        cout << "Enter patient ID: ";
-        cin >> patientId;
+        if (!readInt("Enter patient ID: ", patientId)) return;
         if (findPatient(patientId) == nullptr) {
             cout << "Patient not found.\n";
             return;
         }
 
-        cout << "Enter slot ID: ";
-        cin >> slotId;
+        if (!readInt("Enter slot ID: ", slotId)) return;
         VaccinationSlot* slot = findSlot(slotId);
 
         if (slot == nullptr) {
@@ -349,8 +361,7 @@ public:
 
     void cancelAppointment() {
         int id;
-        cout << "Enter appointment ID: ";
-        cin >> id;
+        if (!readInt("Enter appointment ID: ", id)) return;
 
         Appointment* appointment = findAppointment(id);
         if (appointment == nullptr) {
@@ -373,8 +384,7 @@ public:
         int patientId, slotId;
         string date;
 
-        cout << "Enter patient ID: ";
-        cin >> patientId;
+        if (!readInt("Enter patient ID: ", patientId)) return;
         Patient* patient = findPatient(patientId);
         if (patient == nullptr) {
             cout << "\nPatient not found.\n";
@@ -385,8 +395,7 @@ public:
             return;
         }
 
-        cout << "Enter slot ID (to select vaccine): ";
-        cin >> slotId;
+        if (!readInt("Enter slot ID (to select vaccine): ", slotId)) return;
         VaccinationSlot* slot = findSlot(slotId);
         if (slot == nullptr) {
             cout << "\nSlot not found.\n";
@@ -409,8 +418,7 @@ public:
         int patientId, slotId;
         string date;
 
-        cout << "Enter patient ID: ";
-        cin >> patientId;
+        if (!readInt("Enter patient ID: ", patientId)) return;
         Patient* patient = findPatient(patientId);
         if (patient == nullptr) {
             cout << "\nPatient not found.\n";
@@ -425,8 +433,7 @@ public:
             return;
         }
 
-        cout << "Enter slot ID for Dose 2: ";
-        cin >> slotId;
+        if (!readInt("Enter slot ID for Dose 2: ", slotId)) return;
         VaccinationSlot* slot = findSlot(slotId);
         if (slot == nullptr) {
             cout << "\nSlot not found.\n";
@@ -469,8 +476,7 @@ public:
 
     void displayPatientAppointments() {
         int patientId;
-        cout << "Enter patient ID: ";
-        cin >> patientId;
+        if (!readInt("Enter patient ID: ", patientId)) return;
 
         if (findPatient(patientId) == nullptr) {
             cout << "\nPatient not found.\n";
@@ -489,7 +495,7 @@ public:
     }
 
     void run() {
-        int choice;
+        int choice = -1;
 
         do {
             cout << "\n===== VACCINATION SLOT & APPOINTMENT SCHEDULER =====\n";
@@ -504,8 +510,10 @@ public:
             cout << "9. Record Dose 1\n";
             cout << "10. Record Dose 2\n";
             cout << "0. Exit\n";
-            cout << "Enter choice: ";
-            cin >> choice;
+            if (!readInt("Enter choice: ", choice)) {
+                choice = -1;
+                continue;
+            }
 
             switch (choice) {
                 case 1: registerPatient(); break;
